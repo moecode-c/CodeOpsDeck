@@ -2,12 +2,14 @@ import * as vscode from 'vscode';
 import type { FeatureContext } from '../../types';
 import { getSettings, onSettingsChanged } from '../../core/config';
 import { MonitorService } from './monitorService';
+import { MonitorTreeProvider } from './tree';
 import { buildDashboardHtml, makeNonce } from './dashboard';
 import { formatGb } from './metrics';
 
-/** Local Monitoring (PLAN §6.4) — status-bar CPU/RAM plus a live dashboard. */
+/** Local Monitoring (PLAN §6.4) — sidebar rows, status-bar CPU/RAM, and a live dashboard. */
 export function registerMonitor({ context, logger, scheduler, statusBar }: FeatureContext): void {
   const service = new MonitorService();
+  const tree = new MonitorTreeProvider();
   let panel: vscode.WebviewPanel | undefined;
   let cpuThreshold = getSettings().cpuThreshold;
   let warnedHigh = false;
@@ -27,6 +29,7 @@ export function registerMonitor({ context, logger, scheduler, statusBar }: Featu
   }
 
   context.subscriptions.push(
+    vscode.window.registerTreeDataProvider('codeopsdeck.monitor', tree),
     vscode.commands.registerCommand('codeopsdeck.openDashboard', openDashboard),
     onSettingsChanged(() => {
       cpuThreshold = getSettings().cpuThreshold;
@@ -37,6 +40,7 @@ export function registerMonitor({ context, logger, scheduler, statusBar }: Featu
   const registration = scheduler.register('monitor', intervalMs, () => {
     try {
       const sample = service.sample();
+      tree.update(sample);
       statusBar.set('monitor', `$(pulse) CPU ${sample.cpu.toFixed(0)}% · RAM ${sample.ram.toFixed(0)}%`, {
         tooltip: 'CodeOpsDeck — open monitoring dashboard',
         command: 'codeopsdeck.openDashboard',
