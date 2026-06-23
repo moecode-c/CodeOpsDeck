@@ -5,16 +5,13 @@ import { StatusBarManager } from './core/statusBar';
 import { EventBus } from './core/events';
 import { getSettings, onSettingsChanged } from './core/config';
 import type { AppEvents, FeatureContext } from './types';
-import { registerDoctor } from './features/doctor';
-import { registerDocker } from './features/docker';
-import { registerHealth } from './features/health';
-import { registerMonitor } from './features/monitor';
-import { registerLogs } from './features/logs';
+import { MainViewProvider } from './ui/mainView';
 
 /**
- * Extension entry point — wiring only (PLAN §4). It constructs the shared core
- * services, hands them to each self-contained feature, and connects the
- * scheduler to the window-focus signal so polling backs off when hidden.
+ * Extension entry point — wiring only (PLAN §4). Builds the shared core
+ * services and hands them to the single sidebar webview (icon-navbar UI), then
+ * connects the scheduler to the window-focus signal so polling backs off when
+ * the window is hidden.
  */
 
 let scheduler: Scheduler | undefined;
@@ -32,12 +29,9 @@ export function activate(context: vscode.ExtensionContext): void {
 
   const deps: FeatureContext = { context, logger, scheduler, statusBar, events };
 
-  // Each feature is self-contained: it registers its own view/commands/disposables.
-  registerDoctor(deps);
-  registerDocker(deps);
-  registerHealth(deps);
-  registerMonitor(deps);
-  registerLogs(deps);
+  // The whole sidebar UI + feature orchestration lives in one webview provider.
+  const main = new MainViewProvider(deps);
+  context.subscriptions.push(...main.register());
 
   context.subscriptions.push(
     vscode.commands.registerCommand('codeopsdeck.openSidebar', () =>
@@ -61,7 +55,6 @@ export function activate(context: vscode.ExtensionContext): void {
     }),
   );
 
-  // A single root status-bar entry confirms activation and opens the sidebar.
   statusBar.set('root', '$(dashboard) CodeOpsDeck', {
     tooltip: 'CodeOpsDeck — click to open',
     command: 'codeopsdeck.openSidebar',
