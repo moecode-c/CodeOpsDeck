@@ -5,6 +5,7 @@ import {
   mergeConfigs,
   parseEnvKeys,
   parseProjectConfig,
+  type HealthCheckDef,
   type ProjectConfig,
   type ServiceRequirement,
   type ToolRequirement,
@@ -27,6 +28,17 @@ export async function loadProjectConfig(folder: vscode.WorkspaceFolder): Promise
   } catch {
     // A malformed .codeopsdeck.json shouldn't break the Doctor — fall back.
     return detected;
+  }
+}
+
+/** Read just the `healthChecks` from `.codeopsdeck.json` (used by the poller). */
+export async function loadHealthChecks(folder: vscode.WorkspaceFolder): Promise<HealthCheckDef[]> {
+  const raw = await readText(folder, '.codeopsdeck.json');
+  if (!raw) return [];
+  try {
+    return parseProjectConfig(raw).healthChecks ?? [];
+  } catch {
+    return [];
   }
 }
 
