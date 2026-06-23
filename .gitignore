@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+out/
+*.vsix
+
+# Tests
+.vscode-test/
+coverage/
+
+# Logs / env
+*.log
+.env
+.env.local
+
+# OS / editor
+.DS_Store
+Thumbs.db
+
+# Local planning / strategy docs (kept local, not committed)
+PLAN.md
