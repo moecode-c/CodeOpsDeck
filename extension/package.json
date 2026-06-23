@@ -42,8 +42,16 @@
     },
     "commands": [
       { "command": "codeopsdeck.openSidebar", "title": "Open Sidebar", "category": "CodeOpsDeck" },
-      { "command": "codeopsdeck.showLogs", "title": "Show Logs", "category": "CodeOpsDeck" }
+      { "command": "codeopsdeck.showLogs", "title": "Show Logs", "category": "CodeOpsDeck" },
+      { "command": "codeopsdeck.runDoctor", "title": "Run Doctor", "category": "CodeOpsDeck", "icon": "$(play)" },
+      { "command": "codeopsdeck.doctor.refresh", "title": "Refresh Doctor", "category": "CodeOpsDeck", "icon": "$(refresh)" }
     ],
+    "menus": {
+      "view/title": [
+        { "command": "codeopsdeck.runDoctor", "when": "view == codeopsdeck.doctor", "group": "navigation@1" },
+        { "command": "codeopsdeck.doctor.refresh", "when": "view == codeopsdeck.doctor", "group": "navigation@2" }
+      ]
+    },
     "configuration": {
       "title": "CodeOpsDeck",
       "properties": {
@@ -90,6 +98,9 @@
     "test:watch": "vitest",
     "package:vsix": "vsce package --no-dependencies -o ../codeopsdeck.vsix",
     "vscode:prepublish": "npm run package"
+  },
+  "dependencies": {
+    "yaml": "^2.6.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.18.0",
