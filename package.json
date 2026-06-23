@@ -1,0 +1,19 @@
+{
+  "name": "codeopsdeck-monorepo",
+  "version": "0.0.1",
+  "description": "CodeOpsDeck — a local-first DevOps control center for VS Code (monorepo root).",
+  "private": true,
+  "license": "MIT",
+  "workspaces": ["extension"],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "npm run build -w extension",
+    "watch": "npm run watch -w extension",
+    "typecheck": "npm run typecheck -w extension",
+    "lint": "npm run lint -w extension",
+    "test": "npm run test -w extension",
+    "package:vsix": "npm run package:vsix -w extension"
+  }
+}
