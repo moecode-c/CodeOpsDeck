@@ -50,13 +50,17 @@
       { "command": "codeopsdeck.docker.stop", "title": "Stop Container", "category": "CodeOpsDeck", "icon": "$(debug-stop)" },
       { "command": "codeopsdeck.docker.restart", "title": "Restart Container", "category": "CodeOpsDeck", "icon": "$(debug-restart)" },
       { "command": "codeopsdeck.docker.remove", "title": "Remove Container", "category": "CodeOpsDeck", "icon": "$(trash)" },
-      { "command": "codeopsdeck.docker.viewLogs", "title": "View Logs", "category": "CodeOpsDeck", "icon": "$(output)" }
+      { "command": "codeopsdeck.docker.viewLogs", "title": "View Logs", "category": "CodeOpsDeck", "icon": "$(output)" },
+      { "command": "codeopsdeck.health.refresh", "title": "Refresh Health", "category": "CodeOpsDeck", "icon": "$(refresh)" },
+      { "command": "codeopsdeck.openDashboard", "title": "Open Monitor Dashboard", "category": "CodeOpsDeck", "icon": "$(graph)" }
     ],
     "menus": {
       "view/title": [
         { "command": "codeopsdeck.runDoctor", "when": "view == codeopsdeck.doctor", "group": "navigation@1" },
         { "command": "codeopsdeck.doctor.refresh", "when": "view == codeopsdeck.doctor", "group": "navigation@2" },
-        { "command": "codeopsdeck.docker.refresh", "when": "view == codeopsdeck.docker", "group": "navigation@1" }
+        { "command": "codeopsdeck.docker.refresh", "when": "view == codeopsdeck.docker", "group": "navigation@1" },
+        { "command": "codeopsdeck.health.refresh", "when": "view == codeopsdeck.health", "group": "navigation@1" },
+        { "command": "codeopsdeck.openDashboard", "when": "view == codeopsdeck.monitor", "group": "navigation@1" }
       ],
       "view/item/context": [
         { "command": "codeopsdeck.docker.start", "when": "view == codeopsdeck.docker && viewItem == codeopsdeck.container.stopped", "group": "inline@1" },
