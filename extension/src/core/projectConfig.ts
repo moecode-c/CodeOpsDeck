@@ -2,9 +2,11 @@
  * Pure parsing + zero-config auto-detection for the workspace `.codeopsdeck.json`
  * (PLAN §5). Kept free of any `vscode` import so the logic is unit-testable.
  *
- * The richer auto-detection (docker-compose services, etc.) lands with the
- * Environment Doctor in Section 2; this module owns the shape + the basics.
+ * Includes docker-compose service/port detection (added with the Environment
+ * Doctor). Kept free of any `vscode` import so the logic is unit-testable.
  */
+
+import { parse as parseYaml } from 'yaml';
 
 export interface ToolRequirement {
   name: string;
@@ -95,4 +97,41 @@ export function mergeConfigs(base: ProjectConfig, override: ProjectConfig): Proj
 function extractMinVersion(range: string): string | undefined {
   const match = range.match(/\d+(?:\.\d+){0,2}/);
   return match?.[0];
+}
+
+/** Detect services + their published host ports from a docker-compose file. */
+export function autoDetectFromCompose(content: string): ServiceRequirement[] {
+  let doc: unknown;
+  try {
+    doc = parseYaml(content);
+  } catch {
+    return [];
+  }
+  const services = (doc as { services?: Record<string, unknown> })?.services;
+  if (!services || typeof services !== 'object') return [];
+
+  const result: ServiceRequirement[] = [];
+  for (const [name, raw] of Object.entries(services)) {
+    const port = firstPublishedPort((raw as { ports?: unknown })?.ports);
+    if (port !== undefined) result.push({ name, port });
+  }
+  return result;
+}
+
+function firstPublishedPort(ports: unknown): number | undefined {
+  if (!Array.isArray(ports)) return undefined;
+  for (const entry of ports) {
+    if (typeof entry === 'number') return entry;
+    if (typeof entry === 'string') {
+      // Forms: "host:container", "ip:host:container", or just "container".
+      const parts = entry.split(':');
+      const host = parts.length >= 2 ? parts[parts.length - 2] : parts[0];
+      const port = Number.parseInt(host, 10);
+      if (!Number.isNaN(port)) return port;
+    } else if (entry && typeof entry === 'object' && 'published' in entry) {
+      const port = Number.parseInt(String((entry as { published: unknown }).published), 10);
+      if (!Number.isNaN(port)) return port;
+    }
+  }
+  return undefined;
 }

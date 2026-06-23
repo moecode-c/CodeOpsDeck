@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { parseProjectConfig, parseEnvKeys, autoDetectFromPackageJson } from './projectConfig';
+import {
+  parseProjectConfig,
+  parseEnvKeys,
+  autoDetectFromPackageJson,
+  autoDetectFromCompose,
+} from './projectConfig';
 
 describe('parseEnvKeys', () => {
   it('extracts keys, ignoring comments, blanks and export prefixes', () => {
@@ -32,5 +37,40 @@ describe('autoDetectFromPackageJson', () => {
   it('returns no tools when there are no engines', () => {
     const cfg = autoDetectFromPackageJson(JSON.stringify({}));
     expect(cfg.doctor?.tools ?? []).toEqual([]);
+  });
+});
+
+describe('autoDetectFromCompose', () => {
+  it('extracts service names and their published host ports', () => {
+    const compose = [
+      'services:',
+      '  db:',
+      '    image: postgres:16',
+      '    ports:',
+      '      - "5432:5432"',
+      '  cache:',
+      '    image: redis',
+      '    ports:',
+      '      - "6379"',
+      '  web:',
+      '    image: nginx',
+      '    ports:',
+      '      - target: 80',
+      '        published: 8080',
+    ].join('\n');
+
+    expect(autoDetectFromCompose(compose)).toEqual([
+      { name: 'db', port: 5432 },
+      { name: 'cache', port: 6379 },
+      { name: 'web', port: 8080 },
+    ]);
+  });
+
+  it('ignores services without published ports', () => {
+    expect(autoDetectFromCompose('services:\n  worker:\n    image: busybox\n')).toEqual([]);
+  });
+
+  it('returns nothing for malformed yaml', () => {
+    expect(autoDetectFromCompose(': : : not valid')).toEqual([]);
   });
 });
