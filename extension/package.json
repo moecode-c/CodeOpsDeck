@@ -44,12 +44,30 @@
       { "command": "codeopsdeck.openSidebar", "title": "Open Sidebar", "category": "CodeOpsDeck" },
       { "command": "codeopsdeck.showLogs", "title": "Show Logs", "category": "CodeOpsDeck" },
       { "command": "codeopsdeck.runDoctor", "title": "Run Doctor", "category": "CodeOpsDeck", "icon": "$(play)" },
-      { "command": "codeopsdeck.doctor.refresh", "title": "Refresh Doctor", "category": "CodeOpsDeck", "icon": "$(refresh)" }
+      { "command": "codeopsdeck.doctor.refresh", "title": "Refresh Doctor", "category": "CodeOpsDeck", "icon": "$(refresh)" },
+      { "command": "codeopsdeck.docker.refresh", "title": "Refresh Containers", "category": "CodeOpsDeck", "icon": "$(refresh)" },
+      { "command": "codeopsdeck.docker.start", "title": "Start Container", "category": "CodeOpsDeck", "icon": "$(play)" },
+      { "command": "codeopsdeck.docker.stop", "title": "Stop Container", "category": "CodeOpsDeck", "icon": "$(debug-stop)" },
+      { "command": "codeopsdeck.docker.restart", "title": "Restart Container", "category": "CodeOpsDeck", "icon": "$(debug-restart)" },
+      { "command": "codeopsdeck.docker.remove", "title": "Remove Container", "category": "CodeOpsDeck", "icon": "$(trash)" },
+      { "command": "codeopsdeck.docker.viewLogs", "title": "View Logs", "category": "CodeOpsDeck", "icon": "$(output)" }
     ],
     "menus": {
       "view/title": [
         { "command": "codeopsdeck.runDoctor", "when": "view == codeopsdeck.doctor", "group": "navigation@1" },
-        { "command": "codeopsdeck.doctor.refresh", "when": "view == codeopsdeck.doctor", "group": "navigation@2" }
+        { "command": "codeopsdeck.doctor.refresh", "when": "view == codeopsdeck.doctor", "group": "navigation@2" },
+        { "command": "codeopsdeck.docker.refresh", "when": "view == codeopsdeck.docker", "group": "navigation@1" }
+      ],
+      "view/item/context": [
+        { "command": "codeopsdeck.docker.start", "when": "view == codeopsdeck.docker && viewItem == codeopsdeck.container.stopped", "group": "inline@1" },
+        { "command": "codeopsdeck.docker.stop", "when": "view == codeopsdeck.docker && viewItem == codeopsdeck.container.running", "group": "inline@1" },
+        { "command": "codeopsdeck.docker.restart", "when": "view == codeopsdeck.docker && viewItem == codeopsdeck.container.running", "group": "inline@2" },
+        { "command": "codeopsdeck.docker.viewLogs", "when": "view == codeopsdeck.docker && viewItem =~ /codeopsdeck.container/", "group": "inline@3" },
+        { "command": "codeopsdeck.docker.start", "when": "view == codeopsdeck.docker && viewItem == codeopsdeck.container.stopped", "group": "1_run@1" },
+        { "command": "codeopsdeck.docker.stop", "when": "view == codeopsdeck.docker && viewItem == codeopsdeck.container.running", "group": "1_run@1" },
+        { "command": "codeopsdeck.docker.restart", "when": "view == codeopsdeck.docker && viewItem == codeopsdeck.container.running", "group": "1_run@2" },
+        { "command": "codeopsdeck.docker.viewLogs", "when": "view == codeopsdeck.docker && viewItem =~ /codeopsdeck.container/", "group": "2_inspect@1" },
+        { "command": "codeopsdeck.docker.remove", "when": "view == codeopsdeck.docker && viewItem =~ /codeopsdeck.container/", "group": "3_danger@1" }
       ]
     },
     "configuration": {
@@ -72,6 +90,12 @@
           "default": 5,
           "minimum": 1,
           "description": "How often to sample local CPU/RAM/disk."
+        },
+        "codeopsdeck.docker.intervalSeconds": {
+          "type": "number",
+          "default": 4,
+          "minimum": 2,
+          "description": "How often to refresh the Docker container list and stats."
         },
         "codeopsdeck.monitor.cpuThreshold": {
           "type": "number",
@@ -100,10 +124,12 @@
     "vscode:prepublish": "npm run package"
   },
   "dependencies": {
+    "dockerode": "^4.0.2",
     "yaml": "^2.6.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.18.0",
+    "@types/dockerode": "^3.3.31",
     "@types/node": "^20.17.0",
     "@types/vscode": "^1.85.0",
     "@vscode/vsce": "^3.2.0",

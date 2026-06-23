@@ -7,6 +7,7 @@ export interface Settings {
   logLevel: LogLevel;
   healthIntervalSeconds: number;
   monitorIntervalSeconds: number;
+  dockerIntervalSeconds: number;
   cpuThreshold: number;
   telemetryEnabled: boolean;
 }
@@ -17,6 +18,7 @@ export function getSettings(): Settings {
     logLevel: c.get<LogLevel>('logLevel', 'info'),
     healthIntervalSeconds: c.get<number>('health.intervalSeconds', 30),
     monitorIntervalSeconds: c.get<number>('monitor.intervalSeconds', 5),
+    dockerIntervalSeconds: c.get<number>('docker.intervalSeconds', 4),
     cpuThreshold: c.get<number>('monitor.cpuThreshold', 85),
     telemetryEnabled: c.get<boolean>('telemetry.enabled', false),
   };
