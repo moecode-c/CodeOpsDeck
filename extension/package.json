@@ -1,0 +1,105 @@
+{
+  "name": "codeopsdeck",
+  "displayName": "CodeOpsDeck",
+  "description": "Your DevOps control center, inside VS Code. Docker, health checks, environment validation, logs and GitHub — all local, no backend.",
+  "version": "0.0.1",
+  "publisher": "moecode",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0",
+    "node": ">=18"
+  },
+  "categories": ["Other"],
+  "keywords": ["docker", "devops", "health check", "monitoring", "logs", "environment"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moecode-c/CodeOpsDeck.git"
+  },
+  "bugs": {
+    "url": "https://github.com/moecode-c/CodeOpsDeck/issues"
+  },
+  "homepage": "https://github.com/moecode-c/CodeOpsDeck#readme",
+  "main": "./dist/extension.js",
+  "activationEvents": [],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "codeopsdeck",
+          "title": "CodeOpsDeck",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "codeopsdeck": [
+        { "id": "codeopsdeck.doctor", "name": "Doctor" },
+        { "id": "codeopsdeck.docker", "name": "Docker" },
+        { "id": "codeopsdeck.health", "name": "Health" },
+        { "id": "codeopsdeck.monitor", "name": "Monitor" },
+        { "id": "codeopsdeck.logs", "name": "Logs" }
+      ]
+    },
+    "commands": [
+      { "command": "codeopsdeck.openSidebar", "title": "Open Sidebar", "category": "CodeOpsDeck" },
+      { "command": "codeopsdeck.showLogs", "title": "Show Logs", "category": "CodeOpsDeck" }
+    ],
+    "configuration": {
+      "title": "CodeOpsDeck",
+      "properties": {
+        "codeopsdeck.logLevel": {
+          "type": "string",
+          "enum": ["debug", "info", "warn", "error"],
+          "default": "info",
+          "description": "Logging verbosity for the CodeOpsDeck output channel."
+        },
+        "codeopsdeck.health.intervalSeconds": {
+          "type": "number",
+          "default": 30,
+          "minimum": 5,
+          "description": "How often to poll health-check endpoints."
+        },
+        "codeopsdeck.monitor.intervalSeconds": {
+          "type": "number",
+          "default": 5,
+          "minimum": 1,
+          "description": "How often to sample local CPU/RAM/disk."
+        },
+        "codeopsdeck.monitor.cpuThreshold": {
+          "type": "number",
+          "default": 85,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "CPU percentage that triggers a high-usage warning."
+        },
+        "codeopsdeck.telemetry.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Opt in to anonymous usage metrics. Off by default — CodeOpsDeck never sends data you didn't ask it to."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "package": "node esbuild.js --production",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "package:vsix": "vsce package --no-dependencies -o ../codeopsdeck.vsix",
+    "vscode:prepublish": "npm run package"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.18.0",
+    "@types/node": "^20.17.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^3.2.0",
+    "esbuild": "^0.24.2",
+    "eslint": "^9.18.0",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.20.0",
+    "vitest": "^2.1.8"
+  }
+}
