@@ -13,7 +13,10 @@ async function main() {
     platform: 'node',
     target: 'node18',
     outfile: 'dist/extension.js',
-    external: ['vscode'],
+    // `vscode` is host-provided. `ssh2` is a heavy dockerode dependency only
+    // loaded for ssh:// Docker hosts, which we never use (local socket/pipe) —
+    // keeping it external trims ~800 KB off the bundle.
+    external: ['vscode', 'ssh2'],
     sourcemap: !production,
     minify: production,
     logLevel: 'info',
