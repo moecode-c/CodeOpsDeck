@@ -6,6 +6,7 @@ import {
   parseEnvKeys,
   parseProjectConfig,
   type HealthCheckDef,
+  type LogSourceDef,
   type ProjectConfig,
   type ServiceRequirement,
   type ToolRequirement,
@@ -37,6 +38,17 @@ export async function loadHealthChecks(folder: vscode.WorkspaceFolder): Promise<
   if (!raw) return [];
   try {
     return parseProjectConfig(raw).healthChecks ?? [];
+  } catch {
+    return [];
+  }
+}
+
+/** Read just the `logs` sources from `.codeopsdeck.json`. */
+export async function loadLogSources(folder: vscode.WorkspaceFolder): Promise<LogSourceDef[]> {
+  const raw = await readText(folder, '.codeopsdeck.json');
+  if (!raw) return [];
+  try {
+    return parseProjectConfig(raw).logs ?? [];
   } catch {
     return [];
   }

@@ -34,13 +34,15 @@ Then press **F5** in VS Code (the "Run CodeOpsDeck" launch config) to open an Ex
 
 ## Status
 
-Built section by section:
+**Local MVP complete (v0.1.0).** All five sections shipped:
 
 1. ✅ **Foundation** — monorepo, build/test/CI, core runtime, activating sidebar.
-2. ⏳ Environment Doctor (hero)
-3. ⏳ Docker Control Center
-4. ⏳ Health Checks + Local Monitoring
-5. ⏳ Local Logs + ship
+2. ✅ **Environment Doctor** (hero) — tools/services/env/compose checks, report, fixes.
+3. ✅ **Docker Control Center** — container list, controls, live stats, log streaming.
+4. ✅ **Health Checks + Local Monitoring** — endpoint polling + CPU/RAM dashboard.
+5. ✅ **Local Logs** — Log Viewer with search/filter/follow/save + file tailing.
+
+61 unit tests · 733 KB bundle · zero telemetry by default.
 
 ## License
 

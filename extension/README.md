@@ -1,20 +1,34 @@
 # CodeOpsDeck
 
-**Your DevOps control center, inside VS Code.** Docker, health checks, environment validation, logs and GitHub — all local, no backend, no signup.
+**Your DevOps control center, inside VS Code.** Docker, health checks, environment validation, logs and monitoring — all local, no backend, no signup.
 
 CodeOpsDeck reads your local Docker, processes, logs, env files and health endpoints directly. It is **local-first** and **zero-config**: you get value in the first 30 seconds after install.
 
-## Features (roadmap)
+## Features
 
-| Feature | What it does | Status |
-|---|---|---|
-| 🩺 **Environment Doctor** | One command shows exactly what's wrong with your setup — missing tools, services, env vars — with one-click fixes. | Section 2 |
-| 🐳 **Docker Control Center** | List, start/stop/restart containers; view CPU/mem; stream logs. | Section 3 |
-| ❤️ **Health Checks** | Poll your endpoints; status bar summary; up/down notifications. | Section 4 |
-| 📈 **Local Monitoring** | Live CPU/RAM/disk with a dashboard. | Section 4 |
-| 📜 **Local Logs** | Tail, search and filter file & docker logs. | Section 5 |
+| Feature | What it does |
+|---|---|
+| 🩺 **Environment Doctor** | One view shows exactly what's wrong with your setup — missing tools, wrong versions, services down, missing env vars — with one-click fixes and a shareable report. |
+| 🐳 **Docker Control Center** | List containers with live CPU/memory, start/stop/restart/remove, and stream logs. |
+| ❤️ **Health Checks** | Poll your endpoints; status-bar summary (`♥ 3/4 healthy`) and up/down notifications. |
+| 📈 **Local Monitoring** | Live CPU/RAM in the status bar and a sparkline dashboard. |
+| 📜 **Local Logs** | Tail files in a Log Viewer with search, level filter, follow and save. |
 
-> **This is an early build.** Section 1 (foundation) is in place: the extension activates lazily and shows the CodeOpsDeck sidebar; the core runtime (central scheduler, config, logging, status bar, event bus) is implemented and unit-tested. Features arrive section by section.
+## Zero-config & `.codeopsdeck.json`
+
+CodeOpsDeck works immediately by auto-detecting requirements from `package.json`, `docker-compose.yml` and `.env.example`. Commit a `.codeopsdeck.json` to make a project's requirements explicit so every teammate's Doctor knows them instantly:
+
+```jsonc
+{
+  "doctor": {
+    "tools": [{ "name": "node", "minVersion": "18.0.0" }, { "name": "docker" }],
+    "services": [{ "name": "PostgreSQL", "port": 5432 }],
+    "env": { "file": ".env", "example": ".env.example", "required": ["DATABASE_URL"] }
+  },
+  "healthChecks": [{ "name": "API", "url": "http://localhost:3000/api/health" }],
+  "logs": [{ "name": "app", "path": "logs/app.log" }]
+}
+```
 
 ## Privacy
 
@@ -26,8 +40,9 @@ Runs locally. No telemetry by default — opt in via `codeopsdeck.telemetry.enab
 |---|---|---|
 | `codeopsdeck.logLevel` | `info` | Output channel verbosity. |
 | `codeopsdeck.health.intervalSeconds` | `30` | Health-check poll interval. |
-| `codeopsdeck.monitor.intervalSeconds` | `5` | CPU/RAM/disk sample interval. |
+| `codeopsdeck.monitor.intervalSeconds` | `5` | CPU/RAM sample interval. |
 | `codeopsdeck.monitor.cpuThreshold` | `85` | CPU % that triggers a warning. |
+| `codeopsdeck.docker.intervalSeconds` | `4` | Container list/stats refresh interval. |
 | `codeopsdeck.telemetry.enabled` | `false` | Opt-in anonymous usage metrics. |
 
 ## License

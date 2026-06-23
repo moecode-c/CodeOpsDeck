@@ -2,7 +2,7 @@
   "name": "codeopsdeck",
   "displayName": "CodeOpsDeck",
   "description": "Your DevOps control center, inside VS Code. Docker, health checks, environment validation, logs and GitHub — all local, no backend.",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "publisher": "moecode",
   "license": "MIT",
   "engines": {
@@ -52,7 +52,8 @@
       { "command": "codeopsdeck.docker.remove", "title": "Remove Container", "category": "CodeOpsDeck", "icon": "$(trash)" },
       { "command": "codeopsdeck.docker.viewLogs", "title": "View Logs", "category": "CodeOpsDeck", "icon": "$(output)" },
       { "command": "codeopsdeck.health.refresh", "title": "Refresh Health", "category": "CodeOpsDeck", "icon": "$(refresh)" },
-      { "command": "codeopsdeck.openDashboard", "title": "Open Monitor Dashboard", "category": "CodeOpsDeck", "icon": "$(graph)" }
+      { "command": "codeopsdeck.openDashboard", "title": "Open Monitor Dashboard", "category": "CodeOpsDeck", "icon": "$(graph)" },
+      { "command": "codeopsdeck.logs.refresh", "title": "Refresh Log Sources", "category": "CodeOpsDeck", "icon": "$(refresh)" }
     ],
     "menus": {
       "view/title": [
@@ -60,7 +61,8 @@
         { "command": "codeopsdeck.doctor.refresh", "when": "view == codeopsdeck.doctor", "group": "navigation@2" },
         { "command": "codeopsdeck.docker.refresh", "when": "view == codeopsdeck.docker", "group": "navigation@1" },
         { "command": "codeopsdeck.health.refresh", "when": "view == codeopsdeck.health", "group": "navigation@1" },
-        { "command": "codeopsdeck.openDashboard", "when": "view == codeopsdeck.monitor", "group": "navigation@1" }
+        { "command": "codeopsdeck.openDashboard", "when": "view == codeopsdeck.monitor", "group": "navigation@1" },
+        { "command": "codeopsdeck.logs.refresh", "when": "view == codeopsdeck.logs", "group": "navigation@1" }
       ],
       "view/item/context": [
         { "command": "codeopsdeck.docker.start", "when": "view == codeopsdeck.docker && viewItem == codeopsdeck.container.stopped", "group": "inline@1" },
